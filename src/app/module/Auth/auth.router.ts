@@ -4,9 +4,9 @@ import { authController } from "./auth.controller"
 const router = Router()
 
 router.post('/createUser',authController.createUser)
-router.post('/getUser',authController.getUser)
-router.post('/getSingleUser/:id',authController.getSingleUser)
 router.post('/login',authController.loginUser)
+router.get('/getUser',authController.getUser)
+router.get('/getSingleUser/:id',authController.getSingleUser)
 
 
 
