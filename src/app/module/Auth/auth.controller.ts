@@ -4,12 +4,8 @@ import { authService } from "./auth.service";
 import { StatusCodes } from "http-status-codes";
 
 const createUser = catchAsync(async (req, res) => {
-  const { data } = req.body;
-  const file = req?.file?.path;
-
   const result = await authService.createUserInFoDB(
-    JSON.parse(data),
-    file as string
+    req.body
   );
   sendResponse(res, {
     success: true,

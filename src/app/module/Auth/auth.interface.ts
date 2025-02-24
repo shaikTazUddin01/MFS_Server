@@ -2,21 +2,28 @@ export interface IAuth {
   id?: string;
   name: string;
   email: string;
+  number: number;
   password: string;
-  image: string;
-  role: "USER" | "ADMIN";
+  accountType: "User"|"Agent";
+  role: "User" | "Admin"|"Agent";
+  nid: string;
+  balance:number |undefined;
 }
 
 export interface IDecodedUser {
   userId: string;
   email: string;
+  number: number;
   name: string;
-  role: "USER" | "ADMIN";
+  role: "User" | "Admin"|"Agent";
+  nid: string;
   iat: number;
   exp: number;
+  balance:number;
 }
 
 export enum TUser_Role {
   USER = "USER",
   ADMIN = "ADMIN",
+  Agent = "Agent",
 }

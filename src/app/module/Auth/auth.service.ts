@@ -5,9 +5,9 @@ import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "../../config";
+
 // create new user
-const createUserInFoDB = async (data: IAuth, profileImage: string) => {
-  data.image = profileImage;
+const createUserInFoDB = async (data: IAuth) => {
   const isUserExists = await Auth.findOne({ email: data?.email });
   if (isUserExists) {
     throw new AppError(
@@ -16,7 +16,16 @@ const createUserInFoDB = async (data: IAuth, profileImage: string) => {
     );
   }
 
-  data.role = "USER";
+  let balance;
+  if (data?.accountType === "User") {
+    balance = 40;
+  }
+  if (data?.accountType === "Agent") {
+    balance = 10000;
+  }
+
+  data.role = data?.accountType;
+  data.balance = balance;
   const res = await Auth.create(data);
   return res;
 };
@@ -46,11 +55,11 @@ const loginUser = async (data: Partial<IAuth>) => {
     throw new AppError(StatusCodes.NOT_FOUND, "Wrong password");
   }
   const userInfo = {
-    userId:isUserExists?._id,
+    userId: isUserExists?._id,
     name: isUserExists?.name,
     email: isUserExists?.email,
     role: isUserExists?.role,
-    image: isUserExists?.image,
+    nid: isUserExists?.nid,
   };
   const token = jwt.sign(userInfo, config.assessToken as string, {
     expiresIn: config?.assessTokenExpireIn,
