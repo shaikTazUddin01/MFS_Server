@@ -36,7 +36,7 @@ const getUser = async () => {
   return res;
 };
 
-// get user
+// login user
 const loginUser = async (data: Partial<IAuth>) => {
   const isUserExists = await Auth.findOne({ email: data?.email });
   if (!isUserExists) {
@@ -66,31 +66,9 @@ const loginUser = async (data: Partial<IAuth>) => {
   });
   return token;
 };
-// Update user
-const updateUser = async (data: Partial<IAuth>) => {
-  // console.log("--->", data?.id);
-  const isUserExists = await Auth.findOne({ _id: data?.id });
-  if (!isUserExists) {
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      "You don't have any account,Registration now"
-    );
-  }
 
-  const res = await Auth.findByIdAndUpdate(
-    data?.id,
-    { role: data?.role },
-    { new: true }
-  );
-
-  // console.log(res);
-
-  return res;
-};
 
 export const authService = {
-  createUserInFoDB,
-  getUser,
+  createUserInFoDB, 
   loginUser,
-  updateUser,
 };
