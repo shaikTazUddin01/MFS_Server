@@ -21,7 +21,7 @@ const createUserInFoDB = async (data: IAuth) => {
     balance = 40;
   }
   if (data?.accountType === "Agent") {
-    balance = 10000;
+    balance = 100000;
   }
 
   data.role = data?.accountType;
@@ -33,6 +33,11 @@ const createUserInFoDB = async (data: IAuth) => {
 // get user
 const getUser = async () => {
   const res = await Auth.find();
+  return res;
+};
+// get single user
+const getSingleUser = async (id: string) => {
+  const res = await Auth.findById(id);
   return res;
 };
 
@@ -67,8 +72,9 @@ const loginUser = async (data: Partial<IAuth>) => {
   return token;
 };
 
-
 export const authService = {
-  createUserInFoDB, 
+  createUserInFoDB,
   loginUser,
+  getUser,
+  getSingleUser,
 };
