@@ -15,7 +15,8 @@ const createUser = catchAsync(async (req, res) => {
 
 // get user
 const getUser = catchAsync(async (req, res) => {
-  const result = await authService.getUser();
+  const role= req?.query?.role
+  const result = await authService.getUser(role as string);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

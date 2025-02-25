@@ -4,10 +4,12 @@ export interface IAuth {
   email: string;
   number: number;
   password: string;
-  accountType: "User"|"Agent";
+  accountType: "User"|"Agent"|"Admin";
   role: "User" | "Admin"|"Agent";
   nid: string;
   balance:number |undefined;
+  userStatus?:"Active"|"Block";
+  agentStatus?:"Pending"|"Verified"
 }
 
 export interface IDecodedUser {

@@ -10,7 +10,9 @@ const authSchema = new Schema<IAuth>({
   password: { type: String, required: true },
   nid: { type: String, required: true, unique: true },
   role: { type: String, enum: ["User", "Admin",'Agent'], required: true },
-  accountType: { type: String, enum: ["User",'Agent'], required: true },
+  accountType: { type: String, enum: ["User",'Agent',"Admin"], required: true },
+  userStatus: { type: String, enum: ["Active",'Block'] },
+  agentStatus: { type: String, enum: ["Pending",'Verified'] },
 });
 
 authSchema.pre("save", async function (next) {
