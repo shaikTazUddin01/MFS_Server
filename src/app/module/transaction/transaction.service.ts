@@ -9,10 +9,9 @@ const createTransactionInDB = async (data: ITransaction) => {
 
   const transactionId = `trns-${currentDateTime}${randomNumber}${data?.transactionAmount}`;
 
-  const transaction = await Transaction.create({
-    ...data,
-    transactionId: transactionId,
-  });
+  data.transactionId=transactionId
+  
+  const transaction = await Transaction.create(data);
 
   return transaction;
 };

@@ -3,15 +3,13 @@ import { ITransaction } from "./transaction.interface";
 
 const transactionSchema = new Schema<ITransaction>(
   {
-    senderId: {
-      type: Schema.Types.ObjectId,
+    senderNumber: {
+      type: Number,
       required: true,
-      ref: "User",
     },
-    receiverId: {
-      type: Schema.Types.ObjectId,
+    receiverNumber: {
+      type: Number,
       required: true,
-      ref: "User",
     },
     transactionType: {
       type: String,
