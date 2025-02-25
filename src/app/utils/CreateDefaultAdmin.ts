@@ -16,11 +16,10 @@ export async function createAdminIfNotExists() {
             password: 'admin123',
             nid: '1234567890123',
             role: 'Admin',
-            accountType: 'Admin', 
+            accountType: 'Admin',
             
         };
 
-        adminData.password = await bcrypt.hash(adminData.password, Number(config.saltRounds));
 
         
         await Auth.create(adminData);

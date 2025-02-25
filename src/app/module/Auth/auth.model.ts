@@ -1,18 +1,22 @@
 import { model, Schema } from "mongoose";
 import { IAuth } from "./auth.interface";
 import { config } from "../../config";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 const authSchema = new Schema<IAuth>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  number: { type: Number, required: true,unique:true },
+  number: { type: Number, required: true, unique: true },
   balance: { type: Number, required: true },
   password: { type: String, required: true },
   nid: { type: String, required: true, unique: true },
-  role: { type: String, enum: ["User", "Admin",'Agent'], required: true },
-  accountType: { type: String, enum: ["User",'Agent',"Admin"], required: true },
-  userStatus: { type: String, enum: ["Active",'Block'] },
-  agentStatus: { type: String, enum: ["Pending",'Verified'] },
+  role: { type: String, enum: ["User", "Admin", "Agent"], required: true },
+  accountType: {
+    type: String,
+    enum: ["User", "Agent", "Admin"],
+    required: true,
+  },
+  userStatus: { type: String, enum: ["Active", "Block"] },
+  agentStatus: { type: String, enum: ["Pending", "Verified"] },
 });
 
 authSchema.pre("save", async function (next) {

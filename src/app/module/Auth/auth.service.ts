@@ -31,12 +31,9 @@ const createUserInFoDB = async (data: IAuth) => {
 };
 
 // get user
-const getUser = async (role:string) => {
-  let userRole=''
-  if (role) {
-    userRole=role
-  }
-  const res = await Auth.find({role:userRole});
+const getUser = async (role?: string) => {
+  const filter = role ? { role } : {};
+  const res = await Auth.find(filter);
   return res;
 };
 // get single user
