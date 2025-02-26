@@ -9,8 +9,7 @@ export interface IAuth {
   nid: string;
   balance:number |undefined;
   income?:number;
-  userStatus?:"Active"|"Block";
-  agentStatus?:"Pending"|"Verified"
+  accountStatus?:"Pending"|"Active"|"Block"|"Verified";
 }
 
 export interface IDecodedUser {

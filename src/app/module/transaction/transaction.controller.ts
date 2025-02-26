@@ -8,7 +8,16 @@ const sendMoneyTransaction = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.CREATED,
-    message: "Transaction created successfully",
+    message: "Transaction successfully",
+    data: result,
+  });
+});
+const cashOutTransaction = catchAsync(async (req, res) => {
+  const result = await transactionService.cashOutTransaction(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.CREATED,
+    message: "Transaction successfully",
     data: result,
   });
 });
@@ -38,4 +47,5 @@ export const transactionController = {
   sendMoneyTransaction,
   getAllTransactions,
   getTransactionById,
+  cashOutTransaction
 };

@@ -6,5 +6,6 @@ export interface ITransaction {
     transactionType:"cashIn"|"cashOut";
     transactionId: string;
     transactionAmount: number;
+    password?:string;
   }
   

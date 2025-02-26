@@ -9,6 +9,7 @@ import { config } from "../../config";
 // create new user
 const createUserInFoDB = async (data: IAuth) => {
   const isUserExists = await Auth.findOne({ email: data?.email });
+  let status: "Pending" | "Active" | undefined;
   if (isUserExists) {
     throw new AppError(
       StatusCodes.BAD_REQUEST,
@@ -19,13 +20,16 @@ const createUserInFoDB = async (data: IAuth) => {
   let balance;
   if (data?.accountType === "User") {
     balance = 40;
+    status = "Active";
   }
   if (data?.accountType === "Agent") {
     balance = 100000;
+    status = "Pending";
   }
 
   data.role = data?.accountType;
   data.balance = balance;
+  data.accountStatus = status;
   const res = await Auth.create(data);
   return res;
 };
