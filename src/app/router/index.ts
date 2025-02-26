@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { authRouter } from '../module/Auth/auth.router'
 import { TransactionRouter } from '../module/transaction/transaction.router'
+import { RechargeRequestRouter } from '../module/rechargeRequest/rechargeRequest.router'
 
 const router = Router()
 
@@ -12,6 +13,10 @@ const modulesRoutes = [
   {
     path: '/transaction',
     pathRoute: TransactionRouter,
+  },
+  {
+    path: '/rechargeRequest',
+    pathRoute: RechargeRequestRouter,
   }
   
 ]

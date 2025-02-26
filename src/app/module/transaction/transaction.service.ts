@@ -166,6 +166,26 @@ const cashOutTransaction = async (data: ITransaction) => {
       { new: true }
     );
   }
+
+
+
+ // create transaction id
+ const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
+ const randomNumber = Math.floor(1000 + Math.random() * 9000);
+ const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
+ data.transactionId = transactionId;
+
+ const transactionData={
+  senderNumber:data?.senderNumber,
+    receiverNumber:data?.receiverNumber,
+    transactionType:"cashOut",
+    transactionId: transactionId,
+    transactionAmount: data?.transactionAmount,
+ }
+ // create new transaction
+ const transaction = await Transaction.create(transactionData);
+ return transaction;
+
 };
 
 // get all transaction
