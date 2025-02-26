@@ -8,6 +8,7 @@ export interface IAuth {
   role: "User" | "Admin"|"Agent";
   nid: string;
   balance:number |undefined;
+  income?:number;
   userStatus?:"Active"|"Block";
   agentStatus?:"Pending"|"Verified"
 }

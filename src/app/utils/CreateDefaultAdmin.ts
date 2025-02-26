@@ -17,7 +17,7 @@ export async function createAdminIfNotExists() {
             nid: '1234567890123',
             role: 'Admin',
             accountType: 'Admin',
-            
+            income:0,
         };
 
 

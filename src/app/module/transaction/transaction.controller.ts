@@ -3,8 +3,8 @@ import sendResponse from "../../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { transactionService } from "./transaction.service";
 
-const createTransaction = catchAsync(async (req, res) => {
-  const result = await transactionService.createTransactionInDB(req.body);
+const sendMoneyTransaction = catchAsync(async (req, res) => {
+  const result = await transactionService.sendMoneyTransaction(req.body);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.CREATED,
@@ -35,7 +35,7 @@ const getTransactionById = catchAsync(async (req, res) => {
 });
 
 export const transactionController = {
-  createTransaction,
+  sendMoneyTransaction,
   getAllTransactions,
   getTransactionById,
 };

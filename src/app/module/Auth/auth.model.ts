@@ -7,6 +7,7 @@ const authSchema = new Schema<IAuth>({
   email: { type: String, required: true, unique: true },
   number: { type: Number, required: true, unique: true },
   balance: { type: Number, required: true },
+  income: { type: Number },
   password: { type: String, required: true },
   nid: { type: String, required: true, unique: true },
   role: { type: String, enum: ["User", "Admin", "Agent"], required: true },
