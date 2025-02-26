@@ -85,6 +85,7 @@ const sendMoneyTransaction = async (data: ITransaction) => {
 
 // cash out transaction
 const cashOutTransaction = async (data: ITransaction) => {
+  
   const receiverNumber = data?.receiverNumber;
   const senderNumber = data?.senderNumber;
   const password = data?.password;
@@ -92,6 +93,46 @@ const cashOutTransaction = async (data: ITransaction) => {
   let commission = (transactionAmount * 1.5) / 100;
   let agentCommission = (transactionAmount * 1) / 100;
   let adminCommission = commission - agentCommission;
+
+
+
+// check receiver exists or not
+const isAgentExists = await Auth.findOne({ number: receiverNumber });
+if (!isAgentExists) {
+  throw new AppError(
+    StatusCodes.NOT_FOUND,
+    "Receiver Account not found.please Enter valid Receiver number."
+  );
+}
+if (isAgentExists && isAgentExists?.accountType != "Agent") {
+  throw new AppError(StatusCodes.NOT_FOUND, "Please Select a Agent Number.");
+}
+if (isAgentExists && isAgentExists?.accountStatus != "Verified") {
+  throw new AppError(StatusCodes.NOT_FOUND, "Unauthorized Agent.");
+}
+// update agent balance
+
+let agentNewBalance;
+let agentNewIncome = 0;
+let transferBalance = 0;
+
+if (transactionAmount) {
+  agentNewIncome = agentCommission;
+  transferBalance = transactionAmount - commission;
+}
+
+if (isAgentExists?.balance) {
+  agentNewIncome = (isAgentExists.income ?? 0) + agentCommission;
+  agentNewBalance =
+    isAgentExists?.balance + transferBalance + agentCommission;
+}
+// update agent balance
+await Auth.findOneAndUpdate(
+  { number: receiverNumber },
+  { balance: agentNewBalance, income: agentNewIncome },
+  { new: true }
+);
+
 
   // check user exists or not
   const isUserExists = await Auth.findOne({ number: senderNumber });
@@ -117,43 +158,7 @@ const cashOutTransaction = async (data: ITransaction) => {
     { balance: userNewBalance }
   );
 
-  // check receiver exists or not
-  const isAgentExists = await Auth.findOne({ number: receiverNumber });
-  if (!isAgentExists) {
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      "Receiver Account not found.please Enter valid Receiver number."
-    );
-  }
-  if (isAgentExists && isAgentExists?.accountType != "Agent") {
-    throw new AppError(StatusCodes.NOT_FOUND, "Please Select a Agent Number.");
-  }
-  if (isAgentExists && isAgentExists?.accountStatus != "Verified") {
-    throw new AppError(StatusCodes.NOT_FOUND, "Unauthorized Agent.");
-  }
-  // update agent balance
-
-  let agentNewBalance;
-  let agentNewIncome = 0;
-  let transferBalance = 0;
-
-  if (transactionAmount) {
-    agentNewIncome = agentCommission;
-    transferBalance = transactionAmount - commission;
-  }
-
-  if (isAgentExists?.balance) {
-    agentNewIncome = (isAgentExists.income ?? 0) + agentCommission;
-    agentNewBalance =
-      isAgentExists?.balance + transferBalance + agentCommission;
-  }
-  // update agent balance
-  await Auth.findOneAndUpdate(
-    { number: receiverNumber },
-    { balance: agentNewBalance, income: agentNewIncome },
-    { new: true }
-  );
-
+  
   // update admin balance and income
   const isAdminExists = await Auth.findOne({ role: "Admin" });
 

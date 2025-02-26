@@ -6,6 +6,7 @@ const WithdrawRequestSchema = new Schema<IWithdrawRequest>(
     agentId: {
       type: Schema.ObjectId,
       required: true,
+      ref:"User"
     },
     amount: {
       type: Number,

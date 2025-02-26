@@ -13,7 +13,7 @@ export async function createAdminIfNotExists() {
             email: 'admin@gmail.com',
             number: 1234567890,
             balance: 1000000,
-            password: 'admin123',
+            password: '12345',
             nid: '1234567890123',
             role: 'Admin',
             accountType: 'Admin',

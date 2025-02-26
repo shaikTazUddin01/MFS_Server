@@ -37,7 +37,7 @@ const createUserInFoDB = async (data: IAuth) => {
 // get user
 const getUser = async (query: Partial<IAuth>) => {
   const filter: Record<string, any> = {};
-  console.log(query);
+
   if (query.role) filter.role = query.role;
   if (query.accountStatus) filter.accountStatus = query.accountStatus;
   if (query.number) filter.number = query.number;
@@ -58,6 +58,12 @@ const loginUser = async (data: Partial<IAuth>) => {
     throw new AppError(
       StatusCodes.NOT_FOUND,
       "You don't have any account,Registration now"
+    );
+  }
+  if (isUserExists?.accountStatus==="Block") {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Your Account is Blocked.Please contact with Admin"
     );
   }
 
@@ -84,13 +90,13 @@ const loginUser = async (data: Partial<IAuth>) => {
 };
 
 const updateUser = async (data: IAuth) => {
-  console.log(data);
+
   const res = await Auth.findOneAndUpdate(
     { _id: data?.id },
     { accountStatus: data?.accountStatus }
   );
 
-  console.log(res);
+  
   return res;
 };
 
