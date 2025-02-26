@@ -6,6 +6,7 @@ const router = Router();
 
 router.post("/sendRequest",RechargeRequestController.createRechargeRequest );
 router.get("/getRequest",RechargeRequestController.getRechargeRequest );
-// router.patch("/updateRequest/:id", );
+router.post("/rechargeRequest",RechargeRequestController.addMoneyToAgent );
+
 
 export const RechargeRequestRouter = router;

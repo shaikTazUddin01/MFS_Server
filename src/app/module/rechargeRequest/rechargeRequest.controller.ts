@@ -22,8 +22,18 @@ const getRechargeRequest = catchAsync(async (req, res) => {
       data: result,
     });
   });
+const addMoneyToAgent = catchAsync(async (req, res) => {
+    const result = await RechargeRequestService.addMoneyToAgent(req.body);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.CREATED,
+      message: "Retrieve success",
+      data: result,
+    });
+  });
 
   export const RechargeRequestController={
     createRechargeRequest,
-    getRechargeRequest
+    getRechargeRequest,
+    addMoneyToAgent
 }

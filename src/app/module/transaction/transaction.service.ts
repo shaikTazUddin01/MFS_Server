@@ -318,14 +318,13 @@ const getAllTransactions = async () => {
   const transactions = await Transaction.find();
   return transactions;
 };
-// get single transaction
-const getSingleTransaction = async (id: string) => {
-  const transaction = await Transaction.findById(id);
+// get user transaction
+const getUserTransaction = async (number: string) => {
 
-  if (!transaction) {
-    throw new AppError(StatusCodes.NOT_FOUND, "Transaction not found!");
-  }
-  return transaction;
+  const res = await Transaction.find({
+    $or: [{ senderNumber: number }, { receiverNumber: number }],
+  }).sort({ createdAt: -1 }).limit(100); 
+  return res;
 };
 
 
@@ -333,7 +332,7 @@ const getSingleTransaction = async (id: string) => {
 export const transactionService = {
   sendMoneyTransaction,
   getAllTransactions,
-  getSingleTransaction,
+  getUserTransaction,
   cashOutTransaction,
   cashInTransaction,
   addMoneyToAgent

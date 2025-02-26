@@ -8,6 +8,6 @@ router.post("/cashOut", transactionController.cashOutTransaction);
 router.post("/cashIn", transactionController.cashInTransaction);
 router.post("/addMoney", transactionController.addMoneyToAgent);
 router.get("/getTransaction", transactionController.getAllTransactions);
-router.get("/getTransaction/:id", transactionController.getTransactionById);
+router.get("/getTransaction/:number", transactionController.getUserTransaction);
 
 export const TransactionRouter = router;

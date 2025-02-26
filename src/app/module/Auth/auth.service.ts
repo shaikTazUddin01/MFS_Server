@@ -42,7 +42,7 @@ const getUser = async (query: Partial<IAuth>) => {
   if (query.accountStatus) filter.accountStatus = query.accountStatus;
   if (query.number) filter.number = query.number;
 
-  return await Auth.find(filter);
+  return await Auth.find(filter).sort({ createAt: -1 });
 };
 
 // get single user
@@ -74,7 +74,7 @@ const loginUser = async (data: Partial<IAuth>) => {
     name: isUserExists?.name,
     email: isUserExists?.email,
     role: isUserExists?.role,
-    number:isUserExists?.number,
+    number: isUserExists?.number,
     nid: isUserExists?.nid,
   };
   const token = jwt.sign(userInfo, config.assessToken as string, {

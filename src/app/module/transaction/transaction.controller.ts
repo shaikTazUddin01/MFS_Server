@@ -50,9 +50,10 @@ const getAllTransactions = catchAsync(async (req, res) => {
   });
 });
 
-const getTransactionById = catchAsync(async (req, res) => {
-  const id = req.params.id;
-  const result = await transactionService.getSingleTransaction(id);
+const getUserTransaction = catchAsync(async (req, res) => {
+  const number = req.params.number;
+  const result = await transactionService.getUserTransaction(number);
+
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -64,7 +65,7 @@ const getTransactionById = catchAsync(async (req, res) => {
 export const transactionController = {
   sendMoneyTransaction,
   getAllTransactions,
-  getTransactionById,
+  getUserTransaction,
   cashOutTransaction,
   cashInTransaction,
   addMoneyToAgent

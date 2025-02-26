@@ -6,6 +6,7 @@ const rechargeRequestSchema = new Schema<IRechargeRequest>(
     agentId: {
       type: Schema.ObjectId,
       required: true,
+      ref:"User"
     },
 
     requestStatus: {

@@ -16,7 +16,7 @@ const authSchema = new Schema<IAuth>({
     enum: ["User", "Agent", "Admin"],
     required: true,
   },
-  accountStatus: { type: String, enum: ["Active", "Block","Pending","Verified"] },
+  accountStatus: { type: String, enum: ["Active", "Block","Pending","Verified","Reject"] },
   
 });
 
@@ -31,6 +31,9 @@ authSchema.set("toJSON", {
     delete ret?.password;
     return ret;
   },
+},
+{
+  timestamps: true,
 });
 
 export const Auth = model<IAuth>("User", authSchema);
