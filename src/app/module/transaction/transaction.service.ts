@@ -252,6 +252,67 @@ const cashInTransaction = async (data: ITransaction) => {
   return transaction;
 };
 
+const addMoneyToAgent=async(data:ITransaction)=>{
+
+const agentNumber = data?.receiverNumber;
+  const adminNumber = data?.senderNumber;
+  let transactionAmount = data?.transactionAmount;
+
+  // check agent exists or not
+  const isAgentExists = await Auth.findOne({ number: agentNumber });
+
+  if (!isAgentExists) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "No Agent Match please select a valid Agent"
+    );
+  }
+ 
+
+  const agentNewBalance = (isAgentExists.balance ?? 0) + transactionAmount;
+
+  await Auth.findOneAndUpdate(
+    { number: agentNumber },
+    { balance: agentNewBalance }
+  );
+  // check admin
+  const isAdminExists = await Auth.findOne({ role: "Admin" });
+
+  if (!isAdminExists) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "someThing is wrong,please try again!"
+    );
+  }
+ 
+
+  const adminNewBalance = (isAdminExists.balance ?? 0) - transactionAmount;
+
+  await Auth.findOneAndUpdate(
+    { role: "Admin" },
+    { balance: adminNewBalance }
+  );
+
+  // create transaction id
+  const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
+  data.transactionId = transactionId;
+
+  const transactionData = {
+    senderNumber: data?.senderNumber,
+    receiverNumber: data?.receiverNumber,
+    transactionType: "AddMoney",
+    transactionId: transactionId,
+    transactionAmount: data?.transactionAmount,
+  };
+  // create new transaction
+  const transaction = await Transaction.create(transactionData);
+  return transaction;
+
+}
+
+
 // get all transaction
 const getAllTransactions = async () => {
   const transactions = await Transaction.find();
@@ -267,10 +328,13 @@ const getSingleTransaction = async (id: string) => {
   return transaction;
 };
 
+
+
 export const transactionService = {
   sendMoneyTransaction,
   getAllTransactions,
   getSingleTransaction,
   cashOutTransaction,
   cashInTransaction,
+  addMoneyToAgent
 };

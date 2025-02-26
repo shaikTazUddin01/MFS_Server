@@ -13,7 +13,17 @@ const createRechargeRequest = catchAsync(async (req, res) => {
       data: result,
     });
   });
+const getRechargeRequest = catchAsync(async (req, res) => {
+    const result = await RechargeRequestService.getRechargeRequest();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.CREATED,
+      message: "Retrieve success",
+      data: result,
+    });
+  });
 
   export const RechargeRequestController={
-    createRechargeRequest
+    createRechargeRequest,
+    getRechargeRequest
 }

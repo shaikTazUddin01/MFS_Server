@@ -35,11 +35,16 @@ const createUserInFoDB = async (data: IAuth) => {
 };
 
 // get user
-const getUser = async (role?: string) => {
-  const filter = role ? { role } : {};
-  const res = await Auth.find(filter);
-  return res;
+const getUser = async (query: Partial<IAuth>) => {
+  const filter: Record<string, any> = {};
+  console.log(query);
+  if (query.role) filter.role = query.role;
+  if (query.accountStatus) filter.accountStatus = query.accountStatus;
+  if (query.number) filter.number = query.number;
+
+  return await Auth.find(filter);
 };
+
 // get single user
 const getSingleUser = async (id: string) => {
   const res = await Auth.findById(id);
@@ -69,6 +74,7 @@ const loginUser = async (data: Partial<IAuth>) => {
     name: isUserExists?.name,
     email: isUserExists?.email,
     role: isUserExists?.role,
+    number:isUserExists?.number,
     nid: isUserExists?.nid,
   };
   const token = jwt.sign(userInfo, config.assessToken as string, {
@@ -77,9 +83,21 @@ const loginUser = async (data: Partial<IAuth>) => {
   return token;
 };
 
+const updateUser = async (data: IAuth) => {
+  console.log(data);
+  const res = await Auth.findOneAndUpdate(
+    { _id: data?.id },
+    { accountStatus: data?.accountStatus }
+  );
+
+  console.log(res);
+  return res;
+};
+
 export const authService = {
   createUserInFoDB,
   loginUser,
   getUser,
   getSingleUser,
+  updateUser,
 };

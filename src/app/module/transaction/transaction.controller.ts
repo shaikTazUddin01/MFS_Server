@@ -30,6 +30,15 @@ const cashInTransaction = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const addMoneyToAgent = catchAsync(async (req, res) => {
+  const result = await transactionService.addMoneyToAgent(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.CREATED,
+    message: "Add Money successfully",
+    data: result,
+  });
+});
 
 const getAllTransactions = catchAsync(async (req, res) => {
   const result = await transactionService.getAllTransactions();
@@ -57,5 +66,6 @@ export const transactionController = {
   getAllTransactions,
   getTransactionById,
   cashOutTransaction,
-  cashInTransaction
+  cashInTransaction,
+  addMoneyToAgent
 };

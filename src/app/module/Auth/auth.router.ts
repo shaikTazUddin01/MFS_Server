@@ -7,6 +7,7 @@ router.post('/createUser',authController.createUser)
 router.post('/login',authController.loginUser)
 router.get('/getUser',authController.getUser)
 router.get('/getSingleUser/:id',authController.getSingleUser)
+router.patch('/updateUser',authController.updateUser)
 
 
 

@@ -9,8 +9,14 @@ const createRechargeRequest = async (data: IRechargeRequest) => {
   const res = await RechargeRequest.create(requestData);
   return res;
 };
+const getRechargeRequest = async () => {
+ 
+  const res = await RechargeRequest.find();
+  return res;
+};
 
 
 export const RechargeRequestService={
-    createRechargeRequest
+    createRechargeRequest,
+    getRechargeRequest
 }

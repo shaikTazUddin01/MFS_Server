@@ -15,8 +15,8 @@ const createUser = catchAsync(async (req, res) => {
 
 // get user
 const getUser = catchAsync(async (req, res) => {
-  const role= req?.query?.role
-  const result = await authService.getUser(role as string);
+  
+  const result = await authService.getUser(req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -50,10 +50,23 @@ const loginUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+// Update user
+const updateUser = catchAsync(async (req, res) => {
+  const result = await authService.updateUser(req.body);
+
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "status updated",
+    data: result,
+  });
+});
 
 export const authController = {
   createUser,
   getUser,
   getSingleUser,
   loginUser,
+  updateUser
 };
