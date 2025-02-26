@@ -5,6 +5,7 @@ const router = Router();
 
 router.post("/sendMoney", transactionController.sendMoneyTransaction);
 router.post("/cashOut", transactionController.cashOutTransaction);
+router.post("/cashIn", transactionController.cashInTransaction);
 router.get("/getTransaction", transactionController.getAllTransactions);
 router.get("/getTransaction/:id", transactionController.getTransactionById);
 

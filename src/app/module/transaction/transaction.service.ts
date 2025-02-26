@@ -75,6 +75,7 @@ const sendMoneyTransaction = async (data: ITransaction) => {
   const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
   const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
+ data.transactionType="sendMoney";
   data.transactionId = transactionId;
   // create new transaction
   const transaction = await Transaction.create(data);
@@ -167,25 +168,88 @@ const cashOutTransaction = async (data: ITransaction) => {
     );
   }
 
+  // create transaction id
+  const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
+  data.transactionId = transactionId;
 
-
- // create transaction id
- const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
- const randomNumber = Math.floor(1000 + Math.random() * 9000);
- const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
- data.transactionId = transactionId;
-
- const transactionData={
-  senderNumber:data?.senderNumber,
-    receiverNumber:data?.receiverNumber,
-    transactionType:"cashOut",
+  const transactionData = {
+    senderNumber: data?.senderNumber,
+    receiverNumber: data?.receiverNumber,
+    transactionType: "cashOut",
     transactionId: transactionId,
     transactionAmount: data?.transactionAmount,
- }
- // create new transaction
- const transaction = await Transaction.create(transactionData);
- return transaction;
+  };
+  // create new transaction
+  const transaction = await Transaction.create(transactionData);
+  return transaction;
+};
+// cash in transaction
+const cashInTransaction = async (data: ITransaction) => {
+  const receiverNumber = data?.receiverNumber;
+  const agentNumber = data?.senderNumber;
+  const password = data?.password;
+  let transactionAmount = data?.transactionAmount;
 
+  // check agent exists or not
+  const isAgentExists = await Auth.findOne({ number: agentNumber });
+
+  if (!isAgentExists) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "You don't have any account,Registration now"
+    );
+  }
+  // checked password match or not
+  const isPassMatch = await bcrypt.compare(
+    password as string,
+    isAgentExists?.password
+  );
+
+  if (!isPassMatch) {
+    throw new AppError(StatusCodes.NOT_FOUND, "your password is Wrong");
+  }
+  const agentNewBalance = (isAgentExists.balance ?? 0) - transactionAmount;
+
+  await Auth.findOneAndUpdate(
+    { number: agentNumber },
+    { balance: agentNewBalance }
+  );
+
+  // check user exists or not
+  const isUserExists = await Auth.findOne({ number: receiverNumber });
+  if (!isUserExists) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "User Account not found.please Enter valid User number."
+    );
+  }
+
+  const newBalance = (isUserExists.balance ?? 0) + transactionAmount;
+  // update user balance
+  await Auth.findOneAndUpdate(
+    { number: receiverNumber },
+    { balance: newBalance },
+    { new: true }
+  );
+
+  // create transaction id
+  const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
+  const randomNumber = Math.floor(1000 + Math.random() * 9000);
+  const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
+  data.transactionId = transactionId;
+
+  const transactionData = {
+    senderNumber: data?.senderNumber,
+    receiverNumber: data?.receiverNumber,
+    transactionType: "cashIn",
+    transactionId: transactionId,
+    transactionAmount: data?.transactionAmount,
+  };
+  // create new transaction
+  const transaction = await Transaction.create(transactionData);
+  return transaction;
 };
 
 // get all transaction
@@ -193,7 +257,7 @@ const getAllTransactions = async () => {
   const transactions = await Transaction.find();
   return transactions;
 };
-
+// get single transaction
 const getSingleTransaction = async (id: string) => {
   const transaction = await Transaction.findById(id);
 
@@ -208,4 +272,5 @@ export const transactionService = {
   getAllTransactions,
   getSingleTransaction,
   cashOutTransaction,
+  cashInTransaction,
 };

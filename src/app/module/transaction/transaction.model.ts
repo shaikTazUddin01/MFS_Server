@@ -13,7 +13,7 @@ const transactionSchema = new Schema<ITransaction>(
     },
     transactionType: {
       type: String,
-      enum: ["cashIn", "cashOut"],
+      enum: ["cashIn", "cashOut","sendMoney"],
       required: true,
     },
     transactionId: {
