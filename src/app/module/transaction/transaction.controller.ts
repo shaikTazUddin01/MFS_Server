@@ -61,6 +61,17 @@ const getUserTransaction = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const updateReadNotifi = catchAsync(async (req, res) => {
+  
+  const result = await transactionService.updateReadNotifi(req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "notification read",
+    data: result,
+  });
+});
 
 export const transactionController = {
   sendMoneyTransaction,
@@ -68,5 +79,6 @@ export const transactionController = {
   getUserTransaction,
   cashOutTransaction,
   cashInTransaction,
-  addMoneyToAgent
+  addMoneyToAgent,
+  updateReadNotifi
 };

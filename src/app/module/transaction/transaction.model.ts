@@ -25,6 +25,10 @@ const transactionSchema = new Schema<ITransaction>(
       type: Number,
       required: true,
     },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

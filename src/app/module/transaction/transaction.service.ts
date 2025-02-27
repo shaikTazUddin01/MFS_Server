@@ -75,7 +75,7 @@ const sendMoneyTransaction = async (data: ITransaction) => {
   const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
   const randomNumber = Math.floor(1000 + Math.random() * 9000);
   const transactionId = `trns-${currentDateTime}${randomNumber}${transactionAmount}`;
- data.transactionType="sendMoney";
+  data.transactionType = "sendMoney";
   data.transactionId = transactionId;
   // create new transaction
   const transaction = await Transaction.create(data);
@@ -85,7 +85,6 @@ const sendMoneyTransaction = async (data: ITransaction) => {
 
 // cash out transaction
 const cashOutTransaction = async (data: ITransaction) => {
-  
   const receiverNumber = data?.receiverNumber;
   const senderNumber = data?.senderNumber;
   const password = data?.password;
@@ -94,45 +93,42 @@ const cashOutTransaction = async (data: ITransaction) => {
   let agentCommission = (transactionAmount * 1) / 100;
   let adminCommission = commission - agentCommission;
 
+  // check receiver exists or not
+  const isAgentExists = await Auth.findOne({ number: receiverNumber });
+  if (!isAgentExists) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Receiver Account not found.please Enter valid Receiver number."
+    );
+  }
+  if (isAgentExists && isAgentExists?.accountType != "Agent") {
+    throw new AppError(StatusCodes.NOT_FOUND, "Please Select a Agent Number.");
+  }
+  if (isAgentExists && isAgentExists?.accountStatus != "Verified") {
+    throw new AppError(StatusCodes.NOT_FOUND, "Unauthorized Agent.");
+  }
+  // update agent balance
 
+  let agentNewBalance;
+  let agentNewIncome = 0;
+  let transferBalance = 0;
 
-// check receiver exists or not
-const isAgentExists = await Auth.findOne({ number: receiverNumber });
-if (!isAgentExists) {
-  throw new AppError(
-    StatusCodes.NOT_FOUND,
-    "Receiver Account not found.please Enter valid Receiver number."
+  if (transactionAmount) {
+    agentNewIncome = agentCommission;
+    transferBalance = transactionAmount - commission;
+  }
+
+  if (isAgentExists?.balance) {
+    agentNewIncome = (isAgentExists.income ?? 0) + agentCommission;
+    agentNewBalance =
+      isAgentExists?.balance + transferBalance + agentCommission;
+  }
+  // update agent balance
+  await Auth.findOneAndUpdate(
+    { number: receiverNumber },
+    { balance: agentNewBalance, income: agentNewIncome },
+    { new: true }
   );
-}
-if (isAgentExists && isAgentExists?.accountType != "Agent") {
-  throw new AppError(StatusCodes.NOT_FOUND, "Please Select a Agent Number.");
-}
-if (isAgentExists && isAgentExists?.accountStatus != "Verified") {
-  throw new AppError(StatusCodes.NOT_FOUND, "Unauthorized Agent.");
-}
-// update agent balance
-
-let agentNewBalance;
-let agentNewIncome = 0;
-let transferBalance = 0;
-
-if (transactionAmount) {
-  agentNewIncome = agentCommission;
-  transferBalance = transactionAmount - commission;
-}
-
-if (isAgentExists?.balance) {
-  agentNewIncome = (isAgentExists.income ?? 0) + agentCommission;
-  agentNewBalance =
-    isAgentExists?.balance + transferBalance + agentCommission;
-}
-// update agent balance
-await Auth.findOneAndUpdate(
-  { number: receiverNumber },
-  { balance: agentNewBalance, income: agentNewIncome },
-  { new: true }
-);
-
 
   // check user exists or not
   const isUserExists = await Auth.findOne({ number: senderNumber });
@@ -158,7 +154,6 @@ await Auth.findOneAndUpdate(
     { balance: userNewBalance }
   );
 
-  
   // update admin balance and income
   const isAdminExists = await Auth.findOne({ role: "Admin" });
 
@@ -257,9 +252,8 @@ const cashInTransaction = async (data: ITransaction) => {
   return transaction;
 };
 
-const addMoneyToAgent=async(data:ITransaction)=>{
-
-const agentNumber = data?.receiverNumber;
+const addMoneyToAgent = async (data: ITransaction) => {
+  const agentNumber = data?.receiverNumber;
   const adminNumber = data?.senderNumber;
   let transactionAmount = data?.transactionAmount;
 
@@ -272,7 +266,6 @@ const agentNumber = data?.receiverNumber;
       "No Agent Match please select a valid Agent"
     );
   }
- 
 
   const agentNewBalance = (isAgentExists.balance ?? 0) + transactionAmount;
 
@@ -289,14 +282,10 @@ const agentNumber = data?.receiverNumber;
       "someThing is wrong,please try again!"
     );
   }
- 
 
   const adminNewBalance = (isAdminExists.balance ?? 0) - transactionAmount;
 
-  await Auth.findOneAndUpdate(
-    { role: "Admin" },
-    { balance: adminNewBalance }
-  );
+  await Auth.findOneAndUpdate({ role: "Admin" }, { balance: adminNewBalance });
 
   // create transaction id
   const currentDateTime = new Date().toISOString().replace(/[-:.TZ]/g, "");
@@ -314,9 +303,7 @@ const agentNumber = data?.receiverNumber;
   // create new transaction
   const transaction = await Transaction.create(transactionData);
   return transaction;
-
-}
-
+};
 
 // get all transaction
 const getAllTransactions = async () => {
@@ -325,14 +312,24 @@ const getAllTransactions = async () => {
 };
 // get user transaction
 const getUserTransaction = async (number: string) => {
-
   const res = await Transaction.find({
     $or: [{ senderNumber: number }, { receiverNumber: number }],
-  }).sort({ createdAt: -1 }).limit(100); 
+  })
+    .sort({ createdAt: -1 })
+    .limit(100);
   return res;
 };
 
-
+const updateReadNotifi = async (data: { number: number; isRead: boolean }) => {
+  const res = await Transaction.updateMany(
+    {
+      $or: [{ senderNumber: data.number }, { receiverNumber: data.number }],
+    },
+    { $set: { isRead: true } }
+    ,{new:true}
+  );
+  return res;
+};
 
 export const transactionService = {
   sendMoneyTransaction,
@@ -340,5 +337,6 @@ export const transactionService = {
   getUserTransaction,
   cashOutTransaction,
   cashInTransaction,
-  addMoneyToAgent
+  addMoneyToAgent,
+  updateReadNotifi,
 };

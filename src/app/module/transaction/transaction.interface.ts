@@ -5,5 +5,6 @@ export interface ITransaction {
     transactionId: string;
     transactionAmount: number;
     password?:string;
+    isRead?:boolean;
   }
   
